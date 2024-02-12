@@ -15,8 +15,8 @@ const camera = new THREE.PerspectiveCamera(
   0.1,
   100
 );
-camera.position.y = 1;
-camera.position.z = 5;
+camera.position.y = 5;
+camera.position.z = 10;
 
 const directionalLight = new THREE.DirectionalLight(0xffffff, 5);
 directionalLight.castShadow = true;
@@ -132,7 +132,7 @@ const frontSideMaterial = new THREE.MeshStandardMaterial({
   side: THREE.FrontSide,
 });
 const frontSideMesh = new THREE.Mesh(frontSideGeometry, frontSideMaterial);
-frontSideMesh.position.set(4, 0.5, 4);
+frontSideMesh.position.set(4, 0.5, 6);
 frontSideMesh.castShadow = true;
 frontSideMesh.receiveShadow = true;
 scene.add(frontSideMesh);
@@ -143,7 +143,7 @@ const backSideMaterial = new THREE.MeshStandardMaterial({
   side: THREE.BackSide,
 });
 const backSideMesh = new THREE.Mesh(backSideGeometry, backSideMaterial);
-backSideMesh.position.set(2, 0.51, 4);
+backSideMesh.position.set(2, 0.51, 6);
 // backSideMesh.castShadow = true;
 backSideMesh.receiveShadow = true;
 scene.add(backSideMesh);
@@ -154,10 +154,78 @@ const doubleSideMaterial = new THREE.MeshStandardMaterial({
   side: THREE.DoubleSide,
 });
 const doubleSideMesh = new THREE.Mesh(doubleSideGeometry, doubleSideMaterial);
-doubleSideMesh.position.set(6, 0.5, 4);
+doubleSideMesh.position.set(6, 0.5, 6);
 // doubleSideMesh.castShadow = true;
 doubleSideMesh.receiveShadow = true;
 scene.add(doubleSideMesh);
+
+const torusKnotGeometry = new THREE.TorusKnotGeometry(0.5, 0.15, 100, 20);
+const torusKnotStandardMaterial = new THREE.MeshStandardMaterial({ color: 0xff0000 });
+torusKnotStandardMaterial.roughness = 0.5;
+torusKnotStandardMaterial.metalness = 1;
+const torusKnotStandardMesh = new THREE.Mesh(
+  torusKnotGeometry,
+  torusKnotStandardMaterial
+);
+torusKnotStandardMesh.castShadow = true;
+torusKnotStandardMesh.receiveShadow = true;
+torusKnotStandardMesh.position.set(-4, 1, 4);
+scene.add(torusKnotStandardMesh);
+
+const torusKnotLambertMaterial = new THREE.MeshLambertMaterial({ color: 0xff0000 });
+torusKnotLambertMaterial.emissive = new THREE.Color(0x00ff00);
+torusKnotLambertMaterial.emissiveIntensity = 0.2;
+const torusKnotLambertMesh = new THREE.Mesh(torusKnotGeometry, torusKnotLambertMaterial);
+torusKnotLambertMesh.castShadow = true;
+torusKnotLambertMesh.receiveShadow = true;
+torusKnotLambertMesh.position.set(-2, 1, 4);
+scene.add(torusKnotLambertMesh);
+
+const torusKnotPhongMaterial = new THREE.MeshPhongMaterial({ color: 0xff0000 });
+torusKnotPhongMaterial.emissive = new THREE.Color(0x00ff00);
+torusKnotPhongMaterial.emissiveIntensity = 0.2;
+torusKnotPhongMaterial.specular = new THREE.Color(0x0000ff);
+torusKnotPhongMaterial.shininess = 100;
+const torusKnotPhongMesh = new THREE.Mesh(torusKnotGeometry, torusKnotPhongMaterial);
+torusKnotPhongMesh.castShadow = true;
+torusKnotPhongMesh.receiveShadow = true;
+torusKnotPhongMesh.position.set(0, 1, 4);
+scene.add(torusKnotPhongMesh);
+
+const torusKnotBasicMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+const torusKnotBasicMesh = new THREE.Mesh(torusKnotGeometry, torusKnotBasicMaterial);
+torusKnotBasicMesh.castShadow = true;
+torusKnotBasicMesh.receiveShadow = true;
+torusKnotBasicMesh.position.set(2, 1, 4);
+scene.add(torusKnotBasicMesh);
+
+const torusKnotDepthMaterial = new THREE.MeshDepthMaterial({ color: 0xffffff });
+torusKnotDepthMaterial.opacity = 0.5;
+const torusKnotDepthMesh = new THREE.Mesh(torusKnotGeometry, torusKnotDepthMaterial);
+torusKnotDepthMesh.castShadow = true;
+torusKnotDepthMesh.receiveShadow = true;
+torusKnotDepthMesh.position.set(4, 1, 4);
+scene.add(torusKnotDepthMesh);
+
+const textureLoader = new THREE.TextureLoader();
+// textureLoader.load('/threejs.webp', (texture) => {
+//   const textureBoxGeometry = new THREE.BoxGeometry(1, 1, 1);
+//   const textureMaterial = new THREE.MeshStandardMaterial({ map: texture });
+//   const textureMesh = new THREE.Mesh(textureBoxGeometry, textureMaterial);
+//   textureMesh.position.set(0, 0.5, 6);
+//   textureMesh.castShadow = true;
+//   textureMesh.receiveShadow = true;
+//   scene.add(textureMesh);
+// });
+
+const texture = await textureLoader.loadAsync('/threejs.webp');
+const textureBoxGeometry = new THREE.BoxGeometry(1, 1, 1);
+const textureMaterial = new THREE.MeshStandardMaterial({ map: texture });
+const textureMesh = new THREE.Mesh(textureBoxGeometry, textureMaterial);
+textureMesh.position.set(0, 0.5, 6);
+textureMesh.castShadow = true;
+textureMesh.receiveShadow = true;
+scene.add(textureMesh);
 
 const orbitControls = new OrbitControls(camera, renderer.domElement);
 orbitControls.update();
@@ -173,6 +241,7 @@ window.addEventListener('resize', () => {
 const render = () => {
   renderer.render(scene, camera);
   requestAnimationFrame(render);
+  textureMesh.rotation.y += 0.01;
 };
 
 render();
